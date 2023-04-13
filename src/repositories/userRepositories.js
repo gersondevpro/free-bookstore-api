@@ -17,7 +17,7 @@ async function create({ name, email, password }) {
 
 async function createSession({ token, userId }) {
 
-    await connectionDb.query(`
+    return await connectionDb.query(`
         INSERT INTO sessions (token, "userId")
         VALUES ($1, $2)
     `, [token, userId]);

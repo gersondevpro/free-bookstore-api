@@ -9,7 +9,7 @@ async function authValidation(req, res, next) {
 
     try {
 
-        const { rows: [session]} = await bookRepositories.findSessionByToken(token)
+        const { rows: [session]} = await userRepositories.findSessionByToken(token)
         if(!session) return res.status(401).send("Session not found")
 
         const {rows: [user]} = await userRepositories.findById(session.userId)
