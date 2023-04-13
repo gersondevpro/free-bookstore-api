@@ -4,7 +4,7 @@ import userRepositories from '../repositories/userRepositories.js';
 async function create({ name, email, password }) {
 
     const { rowCount } = await userRepositories.findByEmail(email);
-    if (rowCount) return "Vai da não, to mó cansado"
+    if (rowCount) throw new Error("User already exists");
 
     const hashPassword = await bcrypt.hash(password, 10);
     await userRepositories.create({ name, email, password: hashPassword });

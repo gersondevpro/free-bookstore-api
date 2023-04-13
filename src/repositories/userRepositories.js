@@ -9,7 +9,8 @@ async function findByEmail(email) {
 async function create({ name, email, password }) {
 
     return await connectionDb.query(`
-        INSERT INTO users (name, email, password) VALUES ($1, $2, $3)
+        INSERT INTO users (name, email, password)
+        VALUES ($1, $2, $3)
     `, [name, email, password]);
 
 };
