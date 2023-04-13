@@ -18,7 +18,13 @@ async function findByName (name) {
 
 async function findAll () {
     
-    return await connectionDb.query(`SELECT * FROM books`);
+    return await connectionDb.query(`
+    SELECT b.id, b.name, b.author, b.available,
+    u.name AS "createdBy"
+    FROM books b
+    JOIN users u
+    ON b."userId" = u.id
+    `);
 };
 
 export default { create, findByName, findAll };

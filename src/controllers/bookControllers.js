@@ -18,7 +18,8 @@ async function findAll(req, res) {
 
     try {
         const books = await bookServices.findAll();
-        res.json(books) // retorna um objeto da mesma forma que res.send({ books }) 
+        res.send({books})
+        // res.json(books) retorna um objeto da mesma forma que res.send({ books }), porém sem a lista "books []"
 
     } catch (err) {
         res.status(500).send(err.message)
