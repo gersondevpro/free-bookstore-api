@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import userRepositories from '../repositories/userRepositories.js';
-import { v4 as uuidV4 } from 'uuid';
+import jwt from 'jsonwebtoken';
 import { duplicatedEmailError, invalidCredentialsError } from '../errors/index.js';
+import 'dotenv/config';
 
 async function create({ name, email, password }) {
 
@@ -18,9 +19,11 @@ async function signin({ email, password }) {
     
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) throw invalidCredentialsError()
-    
-    const token = uuidV4();
-    await userRepositories.createSession({ token, userId: user.id });
+
+    const token = jwt.sign({userId: user.id}, process.env.SECRET_JWT, {expiresIn: 86400})
+    // payload costuma ser o ID do usuário
+    // o segundo argumento é uma chave secreta gerada a partir de hash SHA-256
+    // o terceiro argumento pode ser uma option do jwt, nesse caso 'expiresIn' (expira em...) 'x' segundos
 
     return token;
 }
