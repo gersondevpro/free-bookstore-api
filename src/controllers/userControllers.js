@@ -1,6 +1,6 @@
 import userServices from "../services/userServices.js";
 
-async function create(req, res) {
+async function create(req, res, next) {
 
     const { name, email, password } = req.body
 
@@ -8,7 +8,7 @@ async function create(req, res) {
         await userServices.create({ name, email, password });
         return res.sendStatus(201);
     } catch (err) {
-        return res.status(500).send(err.message)
+        next(err)
     }
 }
 
