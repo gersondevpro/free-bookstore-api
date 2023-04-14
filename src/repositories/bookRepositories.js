@@ -27,4 +27,37 @@ async function findAll () {
     `);
 };
 
-export default { create, findByName, findAll };
+async function findById(bookId) {
+
+    return await connectionDb.query(`
+    SELECT * FROM books WHERE id = $1
+`, [bookId]);
+
+};
+
+async function takeBook({userId, bookId}) {
+
+    await connectionDb.query(`
+    UPDATE books SET available = $1 WHERE id = $2
+    `, [false, bookId])
+
+    await connectionDb.query(`
+    INSERT INTO "myBooks" ("userId", "bookId") VALUES ($1, $2)
+    `, [userId, bookId])
+
+}
+
+async function findMyBooks(userId) {
+    return await connectionDb.query(`
+    SELECT
+        u.name as "user_name",
+        b.name as "book_name",
+        b.author as "bookAuthor"
+    FROM "myBooks" m
+        JOIN users u ON m."userId" = u.id
+        JOIN books b ON m."bookId" = b.id
+    WHERE m."userId" = $1 
+    `, [userId])
+}
+
+export default { create, findByName, findAll, findById, takeBook, findMyBooks };

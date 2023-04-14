@@ -1,8 +1,12 @@
 import httpStatus from "http-status";
 
 export function handleApplicationErrors(err, req, res, next) {
-    if(err.name === "ConflictError" || err.name === "DuplicatedEmailError") {
+    if(err.name === "ConflictError") {
         return res.status(httpStatus.CONFLICT).send({ message: err.message });
+    };
+
+    if(err.name === "DuplicatedEmailError") {
+        return res.status(httpStatus.CONFLICT).send({ message: err.message, email: err.email });
     };
 
     if(err.name === "InvalidCredentialsError" || err.name === "UnauthorizedError") {

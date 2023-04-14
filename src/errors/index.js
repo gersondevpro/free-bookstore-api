@@ -5,10 +5,11 @@ function conflictError(message){
     };
 }
 
-function duplicatedEmailError(){
+function duplicatedEmailError(email){
     return {
         name: "DuplicatedEmailError",
-        message: "There is already an user with given email"
+        message: "There is already an user with given email",
+        email,
     };
 }
 
