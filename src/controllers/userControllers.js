@@ -12,7 +12,7 @@ async function create(req, res, next) {
     }
 }
 
-async function signin(req, res) {
+async function signin(req, res, next) {
 
     const { email, password } = req.body
 
@@ -21,7 +21,7 @@ async function signin(req, res) {
 
         return res.send({ token });
     } catch (err) {
-        return res.status(500).send(err.message)
+        next(err)
     }
 
 }
