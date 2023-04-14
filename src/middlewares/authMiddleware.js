@@ -1,29 +1,32 @@
-import { notFoundError, unauthorizedError } from "../errors/index.js";
+import { unauthorizedError } from "../errors/index.js";
 import userRepositories from "../repositories/userRepositories.js";
+import jwt from "jsonwebtoken";
 
 async function authValidation(req, res, next) {
-    
     const { authorization } = req.headers;
-    const token = authorization?.replace("Bearer ", "");
 
-    if(!token) throw unauthorizedError();
+    if (!authorization) throw unauthorizedError()
 
-    try {
+    const parts = authorization.split(" ");
+    if (parts.length !== 2) throw unauthorizedError()
 
-        const { rows: [session]} = await userRepositories.findSessionByToken(token)
-        if(!session) throw unauthorizedError();
+    const [schema, token] = parts;
+    if (schema !== "Bearer") throw unauthorizedError()
 
-        const {rows: [user]} = await userRepositories.findById(session.userId)
-        if(!user) throw notFoundError();
+    jwt.verify(token, process.env.SECRET_JWT, async (error, decoded) => {
+        try {
+            if (error) throw unauthorizedError();
+            const { rows: [user] } = await userRepositories.findById(decoded.userId);
 
+            if (!user) throw unauthorizedError();
 
-        res.locals.user = user;
+            res.locals.user = user;
 
-        next()
-
-    } catch (err) {
-        next(err)
-    }
+            next()
+        } catch (err) {
+            next(err)
+        }
+    })
 }
 
 export default { authValidation };
